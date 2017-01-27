@@ -68,8 +68,8 @@ class plgK2StorePayment_trangellzarinpal extends K2StorePaymentPlugin
 		$CallbackURL = JRoute::_(JURI::root(). "index.php?option=com_k2store&view=checkout" ) .'&orderpayment_id='.$vars->orderpayment_id . '&orderpayment_type=' . $vars->orderpayment_type .'&task=confirmPayment' ;
 			
 		try {
-			// $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 	
-			$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); // for local
+			$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 	
+			//$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); // for local
 			$result = $client->PaymentRequest(
 				[
 				'MerchantID' => $vars->merchant_id,
@@ -83,10 +83,10 @@ class plgK2StorePayment_trangellzarinpal extends K2StorePaymentPlugin
 			
 			$resultStatus = abs($result->Status); 
 			if ($resultStatus == 100) {
-				$vars->trangellzarinpal= 'https://sandbox.zarinpal.com/pg/StartPay/'.$result->Authority;
+				$vars->trangellzarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority;
 				$html = $this->_getLayout('prepayment', $vars);
 				return $html;
-			// Header('Location: https://www.zarinpal.com/pg/StartPay/'.$result->Authority); 
+			// Header('Location: https://sandbox.zarinpal.com/pg/StartPay/'.$result->Authority); 
 		
 			} else {
 				$link = JRoute::_(JURI::root(). "index.php?option=com_k2store" );
@@ -107,18 +107,18 @@ class plgK2StorePayment_trangellzarinpal extends K2StorePaymentPlugin
 		$orderpayment_id = $jinput->get->get('orderpayment_id', '0', 'INT');
         JTable::addIncludePath( JPATH_ADMINISTRATOR.'/components/com_k2store/tables' );
         $orderpayment = JTable::getInstance('Orders', 'Table');
-		$customer_note = $orderpayment->customer_note;
 		//==========================================================================
 		$Authority = $jinput->get->get('Authority', '0', 'INT');
 		$status = $jinput->get->get('Status', '', 'STRING');
 
-	    if ($orderpayment->load( $orderpayment_id ) != null){
+	    if ($orderpayment->load( $orderpayment_id )){
+			$customer_note = $orderpayment->customer_note;
 			if($orderpayment->id == $orderpayment_id) {
 				if (checkHack::checkString($status)){
 					if ($status == 'OK') {
 						try {
-							//$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 
-							$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); // for local
+							$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 
+							//$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); // for local
 							$result = $client->PaymentVerification(
 								[
 									'MerchantID' =>  $this->params->get('merchant_id', ''),
@@ -200,7 +200,9 @@ class plgK2StorePayment_trangellzarinpal extends K2StorePaymentPlugin
 		$html .='<strong>'.JText::_('K2STORE_BANK_TRANSFER_INSTRUCTIONS').'</strong>';
 		$html .='<br />';
 		if (isset($trackingCode)){
+			$html .= '<br />';
 			$html .= $trackingCode .'شماره پیگری ';
+			$html .= '<br />';
 		}
 		$html .='<br />' . $msg;
 		$orderpayment->customer_note =$customer_note.$html;
