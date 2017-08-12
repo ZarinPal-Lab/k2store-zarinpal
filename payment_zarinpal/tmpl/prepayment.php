@@ -10,7 +10,7 @@
 
 defined('_JEXEC') or die('Restricted access'); ?>
 
-<form action="<?php echo @$vars->trangellzarinpal; ?>" method="post" name="adminForm" enctype="multipart/form-data">
+<form action="<?php echo @$vars->zarinpal; ?>" method="post" name="adminForm" enctype="multipart/form-data">
 	<p><?php echo 'درگاه زرین پال' ?></p>
 	<br />
     <input type="submit" class="k2store_cart_button btn btn-primary" value="<?php echo JText::_($vars->button_text); ?>" />
