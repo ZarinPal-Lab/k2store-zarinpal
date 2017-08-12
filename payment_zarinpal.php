@@ -12,14 +12,14 @@ defined('_JEXEC') or die('Restricted access');
 
 require_once (JPATH_ADMINISTRATOR.'/components/com_k2store/library/plugins/payment.php');
 if (!class_exists ('checkHack')) {
-	require_once( JPATH_PLUGINS . '/k2store/payment_trangellzarinpal/trangell_inputcheck.php');
+	require_once( JPATH_PLUGINS . '/k2store/payment_zarinpal/trangell_inputcheck.php');
 }
 
-class plgK2StorePayment_trangellzarinpal extends K2StorePaymentPlugin
+class plgK2StorePayment_zarinpal extends K2StorePaymentPlugin
 {
-    var $_element    = 'payment_trangellzarinpal';
+    var $_element    = 'payment_zarinpal';
 
-	function plgK2StorePayment_trangellzarinpal(& $subject, $config)
+	function plgK2StorePayment_zarinpal(& $subject, $config)
 	{
 		parent::__construct($subject, $config);
 		$this->loadLanguage( 'com_k2store', JPATH_ADMINISTRATOR );
@@ -83,7 +83,7 @@ class plgK2StorePayment_trangellzarinpal extends K2StorePaymentPlugin
 			
 			$resultStatus = abs($result->Status); 
 			if ($resultStatus == 100) {
-				$vars->trangellzarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority;
+				$vars->zarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority;
 				$html = $this->_getLayout('prepayment', $vars);
 				return $html;
 			// Header('Location: https://sandbox.zarinpal.com/pg/StartPay/'.$result->Authority); 
