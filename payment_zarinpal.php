@@ -4,7 +4,7 @@
  * @subpackage  com_k2store
  * @subpackage 	Trangell_Zarinpal
  * @copyright   trangell team => https://trangell.com
- * @copyright   Copyright (C) 20016 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2017 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -83,11 +83,15 @@ class plgK2StorePayment_zarinpal extends K2StorePaymentPlugin
 			
 			$resultStatus = abs($result->Status); 
 			if ($resultStatus == 100) {
-				$vars->zarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority;
+				if ($this->params->get('zaringate', '') == 0){
+					$vars->zarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority;
+				}
+				else {
+					$vars->zarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority.'‫‪/ZarinGate‬‬';
+				}
+				// Header('Location: https://sandbox.zarinpal.com/pg/StartPay/'.$result->Authority); 
 				$html = $this->_getLayout('prepayment', $vars);
 				return $html;
-			// Header('Location: https://sandbox.zarinpal.com/pg/StartPay/'.$result->Authority); 
-		
 			} else {
 				$link = JRoute::_(JURI::root(). "index.php?option=com_k2store" );
 				$app->redirect($link, '<h2>ERR: '. $resultStatus .'</h2>', $msgType='Error'); 
@@ -120,7 +124,7 @@ class plgK2StorePayment_zarinpal extends K2StorePaymentPlugin
 				if (checkHack::checkString($status)){
 					if ($status == 'OK') {
 						try {
-							$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 
+							$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
 							//$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); // for local
 							$result = $client->PaymentVerification(
 								[
