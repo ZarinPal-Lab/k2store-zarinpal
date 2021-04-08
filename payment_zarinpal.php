@@ -107,14 +107,24 @@ class plgK2StorePayment_zarinpal extends K2StorePaymentPlugin
 			//$resultStatus = abs($result->Status);
 			if ($result['data']['code'] == 100) {
 				//if ($this->params->get('zaringate', '') == 0){
-					$vars->zarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result['data']["authority"];
+				//	$vars->zarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result['data']["authority"];
 				//}
 				//else {
 					//$vars->zarinpal= 'https://www.zarinpal.com/pg/StartPay/'.$result->Authority.'‫‪/ZarinGate‬‬';
 				//}
 				// Header('Location: https://sandbox.zarinpal.com/pg/StartPay/'.$result->Authority); 
-				$html = $this->_getLayout('prepayment', $vars);
-				return $html;
+				//$html = $this->_getLayout('prepayment', $vars);
+				//return $html;
+                echo'<html><body>
+<script type="text/javascript" src="https://cdn.zarinpal.com/zarinak/v1/checkout.js"></script>
+<script type="text/javascript">
+window.onload = function () {
+Zarinak.setAuthority("' . $result['data']['authority'] . '");
+Zarinak.showQR();
+Zarinak.open();
+};
+</script>
+</body></html>';
 			} else {
 				$link = JRoute::_(JURI::root(). "index.php?option=com_k2store" );
 				$app->redirect($link, '<h2>ERR: '. $result['errors']['code'] .'</h2>', $msgType='Error');
